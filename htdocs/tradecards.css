@@ -1,0 +1,116 @@
+.fopen-error,
+.fwrite-error,
+.fclose-error,
+.frmError {
+        font-size: 150%;
+        font-weight: bold;
+        background-color: yellow;
+        color: red;
+}
+.left {
+        text-align: left;
+}
+.center {
+        text-align: center;
+}
+.right {
+        text-align: right;
+}
+.joinedColumn {
+        /* background-color: cornflowerblue; */
+        font-style: italic;
+}
+.filebackup {
+        color: red;
+}
+.spreadsheetlookup {
+        color: green;
+}
+.HSB {  /* horizontal scroll bar */
+        overflow-x: auto;
+}
+body {
+        /* 
+         * https://www.w3schools.com/css/css_font.asp
+         * ...The solution that works in all browsers,
+         * is to set a default font-size in percent for the <body> element:
+         */
+        /* font-size: 100%; */
+	/* width: 100%; */
+	background-color: linen;
+}
+table, th, td {
+        border: 2px solid black;
+}
+table {
+        /* width: 100%; */
+        border-collapse: collapse;
+        background-color: lightblue;
+}
+tr:hover {
+        background-color: lightgreen;
+}
+th, td {
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 5px;
+        padding-right: 5px;
+}
+th {
+        background-color: lightgray;
+}
+td {
+        /* background-color: skyblue; /* this was overriding tr:hover */
+}
+p {
+        margin: 0px;
+}
+
+/* Tooltip container */
+.tooltip {
+    position: relative;
+    display: inline-block;
+    /* border-bottom: 1px dotted black; */ /* If you want dots under the hoverable text */
+    border-bottom: 1px black; /* If you want dots under the hoverable text */
+}
+/* Tooltip text */
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 150px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+ 
+    /* Position the tooltip text */
+    position: absolute;
+    z-index: 1;
+}
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+
+/*
+ * Can I use global variables in this file?  For example:
+ *   TABLE-COLOR = "green";
+ *   ERROR-COLOR = "red";
+ *   then...
+ *   table:background-color: TABLE-COLOR;
+ *   fopen-error:background-color: ERROR-COLOR;
+ *   
+ * This way I can group all of the color definitions in one location and 
+ *   then easily change a page's color scheme without searching the file for
+ *   all the places to change.
+ *
+ * -> An argument against this: https://www.w3.org/People/Bos/CSS-variables
+ * -> In general, this does not sound like a good idea.  Maybe in a corporate
+ * -> environment using SASS as a preprocessor.  Keep studying, maybe i'll learn
+ * -> something with responsive web pages from w3schools.
+ *
+ * TODO FIXME xxx
+ *   VIM is not highlighting these words.
+ *   Maybe upgrade?
+ *   17 08 19 - Upgrade did not help.
+ */
