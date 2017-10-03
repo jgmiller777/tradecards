@@ -322,7 +322,7 @@ $sql .= "
         ";
 if ($testmode) { printf ("<br />\n<p>%s</p>\n<br />\n", $sql); }
 
-$lbShortPrint = selectDistinct ($mysqli, "cardsDB", "shortprint", "shortprint", "frmSPText", $frmSPText);
+$lbShortPrint = selectDistinct ($mysqli, "cardsDB", "shortprint", "shortprint", "colShortPrint", "frmSPText", $frmSPText);
 
 // TODO ??? don't perform query if there's a frmErrMsg ???
 $result = $mysqli->query ($sql);

@@ -29,6 +29,9 @@
 .HSB {  /* horizontal scroll bar */
         overflow-x: auto;
 }
+.colShortPrint {
+        width: 125px;
+}
 body {
         /* 
          * https://www.w3schools.com/css/css_font.asp
