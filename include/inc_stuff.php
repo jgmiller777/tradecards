@@ -49,6 +49,7 @@ function selectDistinct ($connection,
                          $tableName,
                          $attributeValue,
                          $attributeName,
+                         $className,
                          $pulldownName,
                          $defaultValue) {
 
@@ -60,8 +61,9 @@ function selectDistinct ($connection,
   // However, via CSS I might be able to "size" a 'select' element
   // -------------------------------------------------------------------------------------
 
+  // printf ("[%s]   [%s]   [%s]   [%s]   [%s]   [%s]<br />\n", $tableName, $attributeValue, $attributeName, $className, $pulldownName, $defaultValue);
+
   $HTMLSelect = "";
-  // printf ("[%s]   [%s]   [%s]   [%s]   [%s]<br /)\n", $tableName, $attributeValue, $attributeName, $pulldownName, $defaultValue);
   
   $defaultWithinResultSet = FALSE;
 
@@ -84,7 +86,9 @@ function selectDistinct ($connection,
 
   // Start the select widget
   $HTMLSelect .= 
-      "<select name='"
+     "<select class='"
+    . $className
+    . "' name='"
     . $pulldownName
     . "'>\n"
   ;
