@@ -1,6 +1,7 @@
 <?php
 
-$TABLEBORDERCOLOR = "blue";
+// TODO need this line?  i think i was just testing a concept that I abandoned
+// $TABLEBORDERCOLOR = "blue";
 
 // O'Reilly "PHP and MySQL", 2nd ed., pages 183-184
 //-----------------------------------------------------------------------------------
@@ -46,42 +47,77 @@ function showMySQLerror ($mysqli) {
 //-------------------------------------------------------------------------------
 function selectDistinct ($connection,
                          $tableName,
+                         $attributeValue,
                          $attributeName,
                          $pulldownName,
                          $defaultValue) {
+
+  // -------------------------------------------------------------------------------------
   // O'Reilly "PHP and MySQL", 2nd ed., pages 184-188
+  // -------------------------------------------------------------------------------------
+  // Another possible way to implement this is with HTML 5's 'list/datalist' input type
+  // It seems to support 'size=' styling.
+  // However, via CSS I might be able to "size" a 'select' element
+  // -------------------------------------------------------------------------------------
+
+  $HTMLSelect = "";
+  // printf ("[%s]   [%s]   [%s]   [%s]   [%s]<br /)\n", $tableName, $attributeValue, $attributeName, $pulldownName, $defaultValue);
+  
   $defaultWithinResultSet = FALSE;
 
   // Query to find distinct values of $attributeName in $tableName
   // TODO enhance function to store which entry in $tableName is $defaultValue
-  $distinctQuery = "
-    select
-      distinct {$attributeName}
-    from
-      {$tableName}
-  ";
+  $distinctQuery = 
+     "SELECT DISTINCT "
+    . $attributeName
+    . " FROM "
+    . $tableName
+    . " ORDER BY "
+    . $attributeName
+    ;
 
   // Run the $distinctQuery on the $connection
-  if (!($resultId = mysqli_query ($distinctQuery, $connection)))
-    showMySQLerror ();
+  $resultId = $connection->query($distinctQuery, MYSQLI_USE_RESULT);
+  if (!$resultId) {
+    die (showMySQLerror ($connection));
+  }
 
   // Start the select widget
-  printf ("<select name=\"{$pulldownName}\">\n");
+  $HTMLSelect .= 
+      "<select name='"
+    . $pulldownName
+    . "'>\n"
+  ;
 
   // Retrieve each row from the query
-  while ($row = mysqli_fetch_array($resuldId)) {
-    // Get the value for the attribute to be displayed
-    $result = $row[$attributeName];
+  while ($row = $resultId->fetch_object()) {
+    // Get the value/text for the attribute to be displayed
+    $resultValue = htmlspecialchars ($row->$attributeValue);
+    $resultText  = htmlspecialchars ($row->$attributeName);
 
     // Check if a $defaultValue is set and, if so, is it the current db value?
-    if (isset($defaultValue) && $result == $defaultValue)
+    if (isset($defaultValue) && $resultText == $defaultValue) {
       // Yes, show as selected
-      printf ("\t<option selected value=\"{$result}\">{$result}\n");
-    else
+      $HTMLSelect .=
+          "\t<option selected='selected' value='"
+        . $resultValue
+        . "'>"
+        . $resultText
+        . "</option>\n"
+      ;
+    } else {
       // No, just show as an option
-      printf ("\t<option value=\"{$result}\">{$result}\n");
+      $HTMLSelect .=
+          "\t<option value=\""
+        . $resultValue
+        . "\">"
+        . $resultText
+        . "</option>\n"
+      ;
+    }
   }
-  printf ("</select>\n");
+  $HTMLSelect .= ("</select>\n");
+  return ($HTMLSelect);
 }
 //jgm
 //jgm//-------------------------------------------------------------------------------
@@ -126,7 +162,7 @@ function html_begin ($title
 // when I actually added these lines after my css link below, the display of my
 // tables from index.php changed.  interesting!
 //
-printf ("\n");			 
+printf ("\n");
 printf ("
 <!DOCTYPE html>
 <html>
@@ -139,7 +175,7 @@ printf ("
 , $title
 , $cssfile
 );
-  return NULL;
+return NULL;
 }
 
 //-----------------------------------------------------------------------------------
