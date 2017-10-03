@@ -22,7 +22,7 @@ $cssfile = "tradecards.css";
 html_begin ($title, $header, $cssfile);
 
 if ($testmode) { 
-  printf ("<p>jgm2 Starting up...</p>\n");
+  printf ("<p>jgm3 Starting up...</p>\n");
   // *** for now, timezone is set in php.ini file ***
   if (date_default_timezone_get()) {
     printf ("<p>date_default_timezone_set: "
@@ -62,7 +62,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   if (!empty($_POST["frmSPText"])) {
     $frmSPText = ($_POST["frmSPText"]);
     ++$nbrWhereConditions;
-    if (!preg_match("/^[\/a-zA-Z0-9 ]*$/", $frmSPText)) {
+    if (!preg_match("/^[\/a-zA-Z0-9' ]*$/", $frmSPText)) {
       $frmErrMsg = "- Only letters, numbers and slash allowed in Short Print";
     }
   }
@@ -308,7 +308,7 @@ if ($nbrWhereConditions >= 1) {
   }
   // Short Print
   if (!empty($frmSPText)) {
-    $sql .= "(cardsDB.shortprint = '" . $frmSPText . "')" . $and . " ";
+    $sql .= "(cardsDB.shortprint = \"" . $frmSPText . "\")" . $and . " ";
   }
   // Get rid of last five characters (i.e., " AND ") in $sql string
   if ($nbrWhereConditions > 1) {
@@ -322,6 +322,8 @@ $sql .= "
         ";
 if ($testmode) { printf ("<br />\n<p>%s</p>\n<br />\n", $sql); }
 
+$lbShortPrint = selectDistinct ($mysqli, "cardsDB", "shortprint", "shortprint", "frmSPText", $frmSPText);
+
 // TODO ??? don't perform query if there's a frmErrMsg ???
 $result = $mysqli->query ($sql);
 if (!$result) {
@@ -330,7 +332,7 @@ if (!$result) {
   printf ("\n");
   printf ("<form method='post' action='%s'>\n", htmlspecialchars($_SERVER["PHP_SELF"]));
   printf ("<h2>Displaying [cardsDB] table data - %d 
-	   <span class='frmError'>%s</span>
+           <span class='frmError'>%s</span>
            <input type='submit' name='submit' value='Submit'></h2>\n"
          , $mysqli->affected_rows
          , $frmErrMsg
@@ -407,7 +409,7 @@ if (!$result) {
                    <input class='center' type='text' size='1' maxlength='1' id='%s' name='frmRCText' value='%s'>
                </th>
                <th>
-                   <input class='center' type='text' size='15' maxlength='15' id='%s' name='frmSPText' value='%s'>
+                   %s
                </th>
                <th></th>
                <th></th>
@@ -444,8 +446,7 @@ if (!$result) {
           , $frmAutoText
           , $frmRCText
           , $frmRCText
-          , $frmSPText
-          , $frmSPText
+          , $lbShortPrint
   );
   printf ("</form>\n");  
   while ($row = $result->fetch_object ()) {
