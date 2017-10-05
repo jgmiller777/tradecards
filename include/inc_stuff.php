@@ -68,7 +68,6 @@ function selectDistinct ($connection,
   $defaultWithinResultSet = FALSE;
 
   // Query to find distinct values of $attributeName in $tableName
-  // TODO enhance function to store which entry in $tableName is $defaultValue
   $distinctQuery = 
      "SELECT DISTINCT "
     . $attributeName
@@ -153,10 +152,10 @@ function selectDistinct ($connection,
 //jgm}
 
 //-----------------------------------------------------------------------------------
-function html_output (&$htmlcode
-                    ,  $html_file_name
-                    ,  $html_file_action) {
-//
+function print_html (&$htmlcode
+                   ,  $html_file_name
+                   ,  $html_file_action) {
+
   printf ("%s", $htmlcode);
 
   switch ($html_file_action) {
