@@ -13,7 +13,9 @@ $starttime = getDateTime("Y/m/d H:i:s");
 $title = "Trading Cards Database";
 $header = "DB Tables Display";
 $cssfile = "tradecards.css";
-html_begin ($title, $header, $cssfile);
+$xxx = "";
+
+html_begin ($title, $header, $cssfile, $xxx);
 
 if ($testmode) { 
   printf ("<p>Starting up...</p>\n");
@@ -73,9 +75,9 @@ if (!$result) {
 
 // query and display the table ------------------------------------------- collection
 $sql = "SELECT
-	  C.id            Cid
+          C.id            Cid
         , C.name          Cname
-	, C.createdbyID   CcreatedbyID
+        , C.createdbyID   CcreatedbyID
         , U.userID        UuserID
         , C.private       Cprivate
         , C.date_added    Cdate_added
@@ -795,11 +797,14 @@ if (!$result) {
 
 $endtime = getDateTime("Y/m/d H:i:s");
 
-printf ("</br><p>Start: %s --- End: %s</p>\n"
+if ($testmode) { 
+printf ("<br />\n<p>Start: %s --- End: %s</p>\n"
         , $starttime
         , $endtime
-       );
+       )
+;
+}
 
-html_end ();
+html_end ($xxx);
 
 ?>

@@ -3,35 +3,43 @@
 // TODO Review http://php.net/manual/en/function.error-reporting.php
 // TODO for possible changes on how to report errors in a test environment
 //
-// TODO consider changing printf statements to "$html .= " statements so
-//      that its contents can be written to a file for debugging purposes.
-//      Apparently, with the way I built the WHERE clause, when i choose
-//      the browser's option to 'view page source' I do not get any of 
-//      the WHERE clause coding.
-//
 error_reporting (E_ALL);
 $testmode = TRUE;
+$testmode2 = TRUE;
 
 include("../include/inc_stuff.php");
 
 $starttime = getDateTime("Y/m/d H:i:s");
 
 $title = "Trading Cards Database";
-$header = "DB Tables Display";
+$header = "cardsDB Table Display";
 $cssfile = "tradecards.css";
-html_begin ($title, $header, $cssfile);
+$htmlcode = "";
+$html_file_name = "../html_output/html_display_cardsDB.txt";
+$html_file_action = "X"; // don't write
+
+// TODO
+$xxx = "delete me later";
+$htmlcode .= html_begin ($title, $header, $cssfile, $xxx);
 
 if ($testmode) { 
-  printf ("<p>jgm3 Starting up...</p>\n");
+  $htmlcode .= "<p>jgm2 Starting up...</p>\n";
   // *** for now, timezone is set in php.ini file ***
   if (date_default_timezone_get()) {
-    printf ("<p>date_default_timezone_set: "
-          . date_default_timezone_get() . "</p>\n");
+    $htmlcode .= "<p>date_default_timezone_set: "
+              . date_default_timezone_get()
+              . "</p>\n"
+    ;
   }
 }
 
 // ***** open the connection and database *****--------------------------------------
 include("../include/inc_mysqlconnect_tradecards.php");
+
+if ($testmode2) {
+  $html_file_action = "I";
+}
+html_output ($htmlcode, $html_file_name, $html_file_action);
 
 // initialize form variables
 // TODO ??? use of cookies to store what was entered into the form fields and
@@ -187,7 +195,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
   }
   if ($testmode) {
-    printf ("<br /><p>Number of needed WHERE conditions - %s</p>\n", $nbrWhereConditions);
+    $htmlcode .= "<p>Number of needed WHERE conditions - "
+              . $nbrWhereConditions
+              . "</p><br />\n"
+    ;
   }
 }
 
@@ -244,71 +255,71 @@ $sql = "SELECT
        ";
 if ($nbrWhereConditions >= 1) {
   $sql .= " WHERE ";
-  $and = "";
-  if ($nbrWhereConditions > 1) { $and = " AND"; }
+  $and = " ";
+  if ($nbrWhereConditions > 1) { $and = " AND "; }
   // Sport
   if (!empty($frmSportText)) {
-    $sql .= "(cardsDB.sportID = '" . $frmSportText . "')" . $and . " ";
+    $sql .= "(cardsDB.sportID = '" . $frmSportText . "')" . $and;
   }
   // Year
   if (!empty($frmYearText)) {
-    $sql .= "(cardsDB.year = '" . $frmYearText . "')" . $and . " ";
+    $sql .= "(cardsDB.year = '" . $frmYearText . "')" . $and;
   }
   // Brand
   if (!empty($frmBrandText)) {
-    $sql .= "(cardsDB.brandID = '" . $frmBrandText . "')" . $and . " ";
+    $sql .= "(cardsDB.brandID = '" . $frmBrandText . "')" . $and;
   }
   // Series
   if (!empty($frmSeriesText)) {
-    $sql .= "(cardsDB.seriesID = '" . $frmSeriesText . "')" . $and . " ";
+    $sql .= "(cardsDB.seriesID = '" . $frmSeriesText . "')" . $and;
   }
   // Category
   if (!empty($frmCategoryText)) {
-    $sql .= "(cardsDB.categoryID = '" . $frmCategoryText . "')" . $and . " ";
+    $sql .= "(cardsDB.categoryID = '" . $frmCategoryText . "')" . $and;
   }
   // SubCategory
   if (!empty($frmSubCategoryText)) {
-    $sql .= "(cardsDB.subcategoryID = '" . $frmSubCategoryText . "')" . $and . " ";
+    $sql .= "(cardsDB.subcategoryID = '" . $frmSubCategoryText . "')" . $and;
   }
   // CardNbr
   if (!empty($frmCardNbrText)) {
-    $sql .= "(cardsDB.cardnbr = '" . $frmCardNbrText . "')" . $and . " ";
+    $sql .= "(cardsDB.cardnbr = '" . $frmCardNbrText . "')" . $and;
   }
   // CardSubNbr
   if (!empty($frmCardSubNbrText)) {
-    $sql .= "(cardsDB.cardsubnbr = '" . $frmCardSubNbrText . "')" . $and . " ";
+    $sql .= "(cardsDB.cardsubnbr = '" . $frmCardSubNbrText . "')" . $and;
   }
   // Player
   if (!empty($frmPlayerText)) {
-    $sql .= "(cardsDB.playerID = '" . $frmPlayerText . "')" . $and . " ";
+    $sql .= "(cardsDB.playerID = '" . $frmPlayerText . "')" . $and;
   }
   // Player Name Ext
   if (!empty($frmPNEText)) {
-    $sql .= "(cardsDB.playernameextID = '" . $frmPNEText . "')" . $and . " ";
+    $sql .= "(cardsDB.playernameextID = '" . $frmPNEText . "')" . $and;
   }
   // Player Career
   if (!empty($frmCareerText)) {
-    $sql .= "(Pla.career = '" . $frmCareerText . "')" . $and . " ";
+    $sql .= "(Pla.career = '" . $frmCareerText . "')" . $and;
   }
   // Team
   if (!empty($frmTeamText)) {
-    $sql .= "(cardsDB.teamID = '" . $frmTeamText . "')" . $and . " ";
+    $sql .= "(cardsDB.teamID = '" . $frmTeamText . "')" . $and;
   }
   // Serial Nbrd
   if (!empty($frmSerialNbrText)) {
-    $sql .= "(cardsDB.serialnbr = '" . $frmSerialNbrText . "')" . $and . " ";
+    $sql .= "(cardsDB.serialnbr = '" . $frmSerialNbrText . "')" . $and;
   }
   // Autograph
   if (!empty($frmAutoText)) {
-    $sql .= "(cardsDB.autograph = '" . $frmAutoText . "')" . $and . " ";
+    $sql .= "(cardsDB.autograph = '" . $frmAutoText . "')" . $and;
   }
   // Rookie Card
   if (!empty($frmRCText)) {
-    $sql .= "(cardsDB.rookiecard = '" . $frmRCText . "')" . $and . " ";
+    $sql .= "(cardsDB.rookiecard = '" . $frmRCText . "')" . $and;
   }
   // Short Print
   if (!empty($frmSPText)) {
-    $sql .= "(cardsDB.shortprint = \"" . $frmSPText . "\")" . $and . " ";
+    $sql .= "(cardsDB.shortprint = \"" . $frmSPText . "\")" . $and;
   }
   // Get rid of last five characters (i.e., " AND ") in $sql string
   if ($nbrWhereConditions > 1) {
@@ -320,7 +331,18 @@ $sql .= "
         ORDER BY
           cardsDB.id
         ";
-if ($testmode) { printf ("<br />\n<p>%s</p>\n<br />\n", $sql); }
+
+if ($testmode) {
+  $htmlcode .= "<p>"
+            . $sql
+            . "</p>\n"
+            . "<br />\n"
+  ;
+  if ($testmode2) {
+    $html_file_action = "A";
+  }
+  html_output ($htmlcode, $html_file_name, $html_file_action);
+}
 
 $lbShortPrint = selectDistinct ($mysqli, "cardsDB", "shortprint", "shortprint", "colShortPrint", "frmSPText", $frmSPText);
 
@@ -329,16 +351,21 @@ $result = $mysqli->query ($sql);
 if (!$result) {
   showMySQLerror ($mysqli);
 } else {
-  printf ("\n");
-  printf ("<form method='post' action='%s'>\n", htmlspecialchars($_SERVER["PHP_SELF"]));
-  printf ("<h2>Displaying [cardsDB] table data - %d 
-           <span class='frmError'>%s</span>
-           <input type='submit' name='submit' value='Submit'></h2>\n"
-         , $mysqli->affected_rows
-         , $frmErrMsg
-  );
+  $htmlcode .= "\n";
+  $htmlcode .= "<form method='post' action='"
+            . htmlspecialchars ($_SERVER["PHP_SELF"])
+            . "'>\n"
+  ;
+  $htmlcode .= "<h2>Displaying [cardsDB] table data - "
+            . $mysqli->affected_rows
+            . "<span class='frmError'>"
+            . $frmErrMsg
+            . "</span>"
+            . " "
+            . "<input type='submit' name='submit' value='Submit'></h2>\n"
+  ;
            // <div class='HSB'>
-  printf ("
+  $htmlcode .= "
            <div>
            <table>
              <tr>
@@ -365,160 +392,106 @@ if (!$result) {
              <tr>
                <th></th>
                <th>
-                   <input class='center' type='text' size='1' maxlength='1' id='%s' name='frmSportText' value='%s'>
+                   <input class='center' type='text' size='1' maxlength='1' id='" . $frmSportText . "' name='frmSportText' value='" . $frmSportText . "'>
                </th>
                <th>
-                   <input class='center' type='text' size='4' maxlength='4' id='%s' name='frmYearText' value='%s'>
+                   <input class='center' type='text' size='4' maxlength='4' id='" . $frmYearText . "' name='frmYearText' value='" . $frmYearText . "'>
                </th>
                <th>
-                   <input class='center' type='text' size='4' maxlength='4' id='%s' name='frmBrandText' value='%s'>
+                   <input class='center' type='text' size='4' maxlength='4' id='" . $frmBrandText . "' name='frmBrandText' value='" . $frmBrandText . "'>
                </th>
                <th>
-                   <input class='center' type='text' size='4' maxlength='4' id='%s' name='frmSeriesText' value='%s'>
+                   <input class='center' type='text' size='4' maxlength='4' id='" . $frmSeriesText . "' name='frmSeriesText' value='" . $frmSeriesText . "'>
                </th>
                <th>
-                   <input class='center' type='text' size='4' maxlength='4' id='%s' name='frmCategoryText' value='%s'>
+                   <input class='center' type='text' size='4' maxlength='4' id='" . $frmCategoryText . "' name='frmCategoryText' value='" . $frmCategoryText . "'>
                </th>
                <th>
-                   <input class='center' type='text' size='4' maxlength='4' id='%s' name='frmSubCategoryText' value='%s'>
+                   <input class='center' type='text' size='4' maxlength='4' id='" . $frmSubCategoryText . "' name='frmSubCategoryText' value='" . $frmSubCategoryText . "'>
                </th>
                <th>
-                   <input class='center' type='text' size='10' maxlength='10' id='%s' name='frmCardNbrText' value='%s'>
+                   <input class='center' type='text' size='10' maxlength='10' id='" . $frmCardNbrText . "' name='frmCardNbrText' value='" . $frmCardNbrText . "'>
                </th>
                <th>
-                   <input class='center' type='text' size='5' maxlength='5' id='%s' name='frmCardSubNbrText' value='%s'>
+                   <input class='center' type='text' size='5' maxlength='5' id='" . $frmCardSubNbrText . "' name='frmCardSubNbrText' value='" . $frmCardSubNbrText . "'>
                </th>
                <th>
-                   <input class='center' type='text' size='10' maxlength='10' id='%s' name='frmPlayerText' value='%s'>
+                   <input class='center' type='text' size='10' maxlength='10' id='" . $frmPlayerText . "' name='frmPlayerText' value='" . $frmPlayerText . "'>
                </th>
                <th>
-                   <input class='center' type='text' size='10' maxlength='10' id='%s' name='frmPNEText' value='%s'>
+                   <input class='center' type='text' size='10' maxlength='10' id='" . $frmPNEText . "' name='frmPNEText' value='" . $frmPNEText . "'>
                    <br />
-                   <input class='center' type='text' size='15' maxlength='15' id='%s' name='frmCareerText' value='%s'>
+                   <input class='center' type='text' size='15' maxlength='15' id='" . $frmCareerText . "' name='frmCareerText' value='" . $frmCareerText . "'>
                </th>
                <th>
-                   <input class='center' type='text' size='10' maxlength='10' id='%s' name='frmTeamText' value='%s'>
+                   <input class='center' type='text' size='10' maxlength='10' id='" . $frmTeamText . "' name='frmTeamText' value='" . $frmTeamText . "'>
                </th>
                <th>
-                   <input class='center' type='text' size='10' maxlength='10' id='%s' name='frmSerialNbrText' value='%s'>
+                   <input class='center' type='text' size='10' maxlength='10' id='" . $frmSerialNbrText . "' name='frmSerialNbrText' value='" . $frmSerialNbrText . "'>
                </th>
                <th>
-                   <input class='center' type='text' size='1' maxlength='1' id='%s' name='frmAutoText' value='%s'>
+                   <input class='center' type='text' size='1' maxlength='1' id='" . $frmAutoText . "' name='frmAutoText' value='" . $frmAutoText . "'>
                </th>
                <th>
-                   <input class='center' type='text' size='1' maxlength='1' id='%s' name='frmRCText' value='%s'>
+                   <input class='center' type='text' size='1' maxlength='1' id='" . $frmRCText . "' name='frmRCText' value='" . $frmRCText . "'>
                </th>
                <th>
-                   %s
+                   " . $lbShortPrint . "
                </th>
                <th></th>
                <th></th>
                <th></th>
              </tr>
           "
-          , $frmSportText
-          , $frmSportText
-          , $frmYearText
-          , $frmYearText
-          , $frmBrandText
-          , $frmBrandText
-          , $frmSeriesText
-          , $frmSeriesText
-          , $frmCategoryText
-          , $frmCategoryText
-          , $frmSubCategoryText
-          , $frmSubCategoryText
-          , $frmCardNbrText
-          , $frmCardNbrText
-          , $frmCardSubNbrText
-          , $frmCardSubNbrText
-          , $frmPlayerText
-          , $frmPlayerText
-          , $frmPNEText
-          , $frmPNEText
-          , $frmCareerText
-          , $frmCareerText
-          , $frmTeamText
-          , $frmTeamText
-          , $frmSerialNbrText
-          , $frmSerialNbrText
-          , $frmAutoText
-          , $frmAutoText
-          , $frmRCText
-          , $frmRCText
-          , $lbShortPrint
-  );
-  printf ("</form>\n");  
+  ;
+  $htmlcode .= "</form>\n";  
   while ($row = $result->fetch_object ()) {
-    printf ("
+    $htmlcode .= "
              <tr>
-               <td class='center'><div class='tooltip'>%s<span class='tooltiptext'>cardsDB</span></div></td>
-               <td class='center joinedColumn'>%s (%s)</td>
-               <td class='center'>%s</td>
-               <td class='center joinedColumn'><div class='tooltip'>%s (%s)<span class='tooltiptext'>brand</span></div></td>
-               <td class='center joinedColumn'><div class='tooltip'>%s (%s)<span class='tooltiptext'>series</span></div></td>
-               <td class='center joinedColumn'><div class='tooltip'>%s (%s)<span class='tooltiptext'>category</span></div></td>
-               <td class='center joinedColumn'><div class='tooltip'>%s (%s)<span class='tooltiptext'>subcategory</span></div></td>
-               <td class='center'>%s</td>
-               <td class='center'>%s</td>
-               <td class='center joinedColumn'>%s (%s)</td>
-               <td class='center joinedColumn'>[%s] (%s) (%s)</div></td>
-               <td class='center joinedColumn'>%s (%s)</td>
-               <td class='center'><div class='tooltip'>%s<span class='tooltiptext'>serial numbered?</span></div></td>
-               <td class='center'><div class='tooltip'>%s<span class='tooltiptext'>autographed?</span></div></td>
-               <td class='center'><div class='tooltip'>%s<span class='tooltiptext'>rookie card?</span></div></td>
-               <td class='center'><div class='tooltip'>%s<span class='tooltiptext'>short printed?</span></div></td>
-               <td class='center joinedColumn'>%s - %s</td>
-               <td class='center'>%s</td>
-               <td class='center'>%s</td>
+               <td class='center'><div class='tooltip'>" . htmlspecialchars ($row->cardsDBid) . "<span class='tooltiptext'>cardsDB</span></div></td>
+               <td class='center joinedColumn'>" . htmlspecialchars ($row->cardsDBsportID) . " (" . htmlspecialchars ($row->Sponame) . ")</td>
+               <td class='center'>" . htmlspecialchars ($row->cardsDByear) . "</td>
+               <td class='center joinedColumn'><div class='tooltip'>" . htmlspecialchars ($row->cardsDBbrandID) . " (" . htmlspecialchars ($row->Braname) . ")<span class='tooltiptext'>brand</span></div></td>
+               <td class='center joinedColumn'><div class='tooltip'>" . htmlspecialchars ($row->cardsDBseriesID) . " (" . htmlspecialchars ($row->Sername) . ")<span class='tooltiptext'>series</span></div></td>
+               <td class='center joinedColumn'><div class='tooltip'>" . htmlspecialchars ($row->cardsDBcategoryID) . " (" . htmlspecialchars ($row->Catname) . ")<span class='tooltiptext'>category</span></div></td>
+               <td class='center joinedColumn'><div class='tooltip'>" . htmlspecialchars ($row->cardsDBsubcategoryID) . " (" . htmlspecialchars ($row->SuCatname) . ")<span class='tooltiptext'>subcategory</span></div></td>
+               <td class='center'>" . htmlspecialchars ($row->cardsDBcardnbr) . "</td>
+               <td class='center'>" . htmlspecialchars ($row->cardsDBcardsubnbr) . "</td>
+               <td class='center joinedColumn'>" . htmlspecialchars ($row->cardsDBplayerID) . " (" . htmlspecialchars ($row->Planame) . ")</td>
+               <td class='center joinedColumn'>[" . htmlspecialchars ($row->cardsDBplayernameextID) . "] (" . htmlspecialchars ($row->PNEextname) . ") (" . htmlspecialchars ($row->Placareer) . ")</div></td>
+               <td class='center joinedColumn'>" . htmlspecialchars ($row->cardsDBteamID) . " (" . htmlspecialchars ($row->Teaname) . ")</td>
+               <td class='center'><div class='tooltip'>" . htmlspecialchars ($row->cardsDBserialnbr) . "<span class='tooltiptext'>serial numbered?</span></div></td>
+               <td class='center'><div class='tooltip'>" . htmlspecialchars ($row->cardsDBautograph) . "<span class='tooltiptext'>autographed?</span></div></td>
+               <td class='center'><div class='tooltip'>" . htmlspecialchars ($row->cardsDBrookiecard) . "<span class='tooltiptext'>rookie card?</span></div></td>
+               <td class='center'><div class='tooltip'>" . htmlspecialchars ($row->cardsDBshortprint) . "<span class='tooltiptext'>short printed?</span></div></td>
+               <td class='center joinedColumn'>" . htmlspecialchars ($row->cardsDBcommentsID) . " - " . htmlspecialchars ($row->Comdescription) . "</td>
+               <td class='center'>" . htmlspecialchars ($row->cardsDBdateadded) . "</td>
+               <td class='center'>" . htmlspecialchars ($row->cardsDBdateupdated) . "</td>
              </tr>
             "
-           , htmlspecialchars ($row->cardsDBid)
-           , htmlspecialchars ($row->cardsDBsportID)
-           , htmlspecialchars ($row->Sponame)
-           , htmlspecialchars ($row->cardsDByear)
-           , htmlspecialchars ($row->cardsDBbrandID)
-           , htmlspecialchars ($row->Braname)
-           , htmlspecialchars ($row->cardsDBseriesID)
-           , htmlspecialchars ($row->Sername)
-           , htmlspecialchars ($row->cardsDBcategoryID)
-           , htmlspecialchars ($row->Catname)
-           , htmlspecialchars ($row->cardsDBsubcategoryID)
-           , htmlspecialchars ($row->SuCatname)
-           , htmlspecialchars ($row->cardsDBcardnbr)
-           , htmlspecialchars ($row->cardsDBcardsubnbr)
-           , htmlspecialchars ($row->cardsDBplayerID)
-           , htmlspecialchars ($row->Planame)
-           , htmlspecialchars ($row->cardsDBplayernameextID)
-           , htmlspecialchars ($row->PNEextname)
-           , htmlspecialchars ($row->Placareer)
-           , htmlspecialchars ($row->cardsDBteamID)
-           , htmlspecialchars ($row->Teaname)
-           , htmlspecialchars ($row->cardsDBserialnbr)
-           , htmlspecialchars ($row->cardsDBautograph)
-           , htmlspecialchars ($row->cardsDBrookiecard)
-           , htmlspecialchars ($row->cardsDBshortprint)
-           , htmlspecialchars ($row->cardsDBcommentsID)
-           , htmlspecialchars ($row->Comdescription)
-           , htmlspecialchars ($row->cardsDBdateadded)
-           , htmlspecialchars ($row->cardsDBdateupdated)
-    );
+    ;
   }
-  printf ("
+  $htmlcode .= "
            </table>
            </div>
           "
-  );
+  ;
   $result->free_result ();
 }
 
 $endtime = getDateTime("Y/m/d H:i:s");
 
-printf ("<br /><p>Start: %s --- End: %s</p>\n"
-        , $starttime
-        , $endtime
-       );
+if ($testmode) { 
+  $htmlcode .= "<br />\n<p>Start: " . $starttime . " --- End: " . $endtime . "</p>\n";
+}
 
-html_end ();
+// TODO
+$xxx = "delete me later";
+$htmlcode .= html_end ($xxx);
+
+if ($testmode2) {
+  $html_file_action = "A";
+}
+html_output ($htmlcode, $html_file_name, $html_file_action);
 
 ?>
