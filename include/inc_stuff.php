@@ -76,7 +76,7 @@ function selectDistinct ($connection,
     . $tableName
     . " ORDER BY "
     . $attributeName
-    ;
+  ;
 
   // Run the $distinctQuery on the $connection
   $resultId = $connection->query($distinctQuery, MYSQLI_USE_RESULT);
@@ -153,9 +153,63 @@ function selectDistinct ($connection,
 //jgm}
 
 //-----------------------------------------------------------------------------------
-function html_begin ($title
-                   , $header
-                   , $cssfile) {
+function html_output (&$htmlcode
+                    ,  $html_file_name
+                    ,  $html_file_action) {
+//
+  printf ("%s", $htmlcode);
+
+  switch ($html_file_action) {
+    case "I":
+      if (!($fh = fopen ($html_file_name, "wt"))) {
+        printf ("<p class='fopen-error'>Cannot open %s.</p>\n", $html_file_name);
+        // exit (1);
+      } else {
+        if (!(fwrite ($fh, $htmlcode))) {
+          printf ("<p class='fwrite-error'>Cannot write %s.</p>\n", $html_file_name);
+          // exit (1);
+        } else {
+          if (!(fclose ($fh))) {
+            printf ("<p class='fclose-error'>Cannot close %s.</p>\n", $html_file_name);
+            // exit (1);
+          } else {
+            // printf ("<h3 class='filebackup'>%s closed!</h3>\n", $filename);
+          }
+        }
+      }
+      break;
+    case "A":
+      if (!($fh = fopen ($html_file_name, "at"))) {
+        printf ("<p class='fopen-error'>Cannot open %s.</p>\n", $html_file_name);
+        // exit (1);
+      } else {
+        if (!(fwrite ($fh, $htmlcode))) {
+          printf ("<p class='fwrite-error'>Cannot write %s.</p>\n", $html_file_name);
+          // exit (1);
+        } else {
+          if (!(fclose ($fh))) {
+            printf ("<p class='fclose-error'>Cannot close %s.</p>\n", $html_file_name);
+            // exit (1);
+          } else {
+            // printf ("<h3 class='filebackup'>%s closed!</h3>\n", $filename);
+          }
+        }
+      }
+      break;
+    case "X":
+      // fall through to default
+    default:
+      // don't write to fie
+  }
+
+  $htmlcode = "";
+}
+
+//-----------------------------------------------------------------------------------
+function html_begin ( $title
+                   ,  $header
+                   ,  $cssfile
+                   ,  $htmlcode) {
 //
 // TODO change to strict XML
 //
@@ -166,30 +220,41 @@ function html_begin ($title
 // when I actually added these lines after my css link below, the display of my
 // tables from index.php changed.  interesting!
 //
-printf ("\n");
-printf ("
+$htmlstr = "
+\n
 <!DOCTYPE html>
 <html>
   <head>
-    <title>%s</title>
-    <link rel='stylesheet' type='text/css' href='%s'>
+    <title>" . $title . "</title>
+    <link rel='stylesheet' type='text/css' href='" . $cssfile . "'>
   </head>
   <body>
-\n"
-, $title
-, $cssfile
-);
+\n
+";
+if (empty($htmlcode)) {
+  printf ("%s", $htmlstr);
+} else {
+  return ($htmlstr);
+}
+
 return NULL;
+
 }
 
 //-----------------------------------------------------------------------------------
-function html_end () {
+function html_end ( $htmlcode) {
 
-printf ("
+$htmlstr = "
   </body>
 </html>
-\n"
-);
+\n
+";
+if (empty($htmlcode)) {
+  printf ("%s", $htmlstr);
+} else {
+  return ($htmlstr);
+}
+
 return NULL;
 }
 
