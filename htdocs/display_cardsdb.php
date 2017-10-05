@@ -23,7 +23,7 @@ $xxx = "delete me later";
 $htmlcode .= html_begin ($title, $header, $cssfile, $xxx);
 
 if ($testmode) { 
-  $htmlcode .= "<p>jgm2 Starting up...</p>\n";
+  $htmlcode .= "<p>jgm8 Starting up...</p>\n";
   // *** for now, timezone is set in php.ini file ***
   if (date_default_timezone_get()) {
     $htmlcode .= "<p>date_default_timezone_set: "
@@ -39,7 +39,7 @@ include("../include/inc_mysqlconnect_tradecards.php");
 if ($testmode2) {
   $html_file_action = "I";
 }
-html_output ($htmlcode, $html_file_name, $html_file_action);
+print_html ($htmlcode, $html_file_name, $html_file_action);
 
 // initialize form variables
 // TODO ??? use of cookies to store what was entered into the form fields and
@@ -90,7 +90,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $frmErrMsg = "- Only ynYN allowed in Autograph";
     }
   }
-  // Serial Nbrd
+  // SerialNbr
   if (!empty($_POST["frmSerialNbrText"])) {
     $frmSerialNbrText = ($_POST["frmSerialNbrText"]);
     ++$nbrWhereConditions;
@@ -305,7 +305,7 @@ if ($nbrWhereConditions >= 1) {
   if (!empty($frmTeamText)) {
     $sql .= "(cardsDB.teamID = '" . $frmTeamText . "')" . $and;
   }
-  // Serial Nbrd
+  // SerialNbrd
   if (!empty($frmSerialNbrText)) {
     $sql .= "(cardsDB.serialnbr = '" . $frmSerialNbrText . "')" . $and;
   }
@@ -313,7 +313,7 @@ if ($nbrWhereConditions >= 1) {
   if (!empty($frmAutoText)) {
     $sql .= "(cardsDB.autograph = '" . $frmAutoText . "')" . $and;
   }
-  // Rookie Card
+  // RookieCard
   if (!empty($frmRCText)) {
     $sql .= "(cardsDB.rookiecard = '" . $frmRCText . "')" . $and;
   }
@@ -341,10 +341,16 @@ if ($testmode) {
   if ($testmode2) {
     $html_file_action = "A";
   }
-  html_output ($htmlcode, $html_file_name, $html_file_action);
+  print_html ($htmlcode, $html_file_name, $html_file_action);
 }
 
-$lbShortPrint = selectDistinct ($mysqli, "cardsDB", "shortprint", "shortprint", "colShortPrint", "frmSPText", $frmSPText);
+$lbYear = selectDistinct ($mysqli, "cardsDB", "year", "year", "colSelYear", "frmYearText", $frmYearText);
+$lbCardNbr = selectDistinct ($mysqli, "cardsDB", "cardnbr", "cardnbr", "colSelCardNbr", "frmCardNbrText", $frmCardNbrText);
+$lbCardSubNbr = selectDistinct ($mysqli, "cardsDB", "cardsubnbr", "cardsubnbr", "colSelCardSubNbr", "frmCardSubNbrText", $frmCardSubNbrText);
+$lbSerialNbr = selectDistinct ($mysqli, "cardsDB", "serialnbr", "serialnbr", "colSelSerialNbr", "frmSerialNbrText", $frmSerialNbrText);
+$lbAutograph = selectDistinct ($mysqli, "cardsDB", "autograph", "autograph", "colSelAutograph", "frmAutoText", $frmAutoText);
+$lbRookieCard = selectDistinct ($mysqli, "cardsDB", "rookiecard", "rookiecard", "colSelRookieCard", "frmRCText", $frmRCText);
+$lbShortPrint = selectDistinct ($mysqli, "cardsDB", "shortprint", "shortprint", "colSelShortPrint", "frmSPText", $frmSPText);
 
 // TODO ??? don't perform query if there's a frmErrMsg ???
 $result = $mysqli->query ($sql);
@@ -395,7 +401,7 @@ if (!$result) {
                    <input class='center' type='text' size='1' maxlength='1' id='" . $frmSportText . "' name='frmSportText' value='" . $frmSportText . "'>
                </th>
                <th>
-                   <input class='center' type='text' size='4' maxlength='4' id='" . $frmYearText . "' name='frmYearText' value='" . $frmYearText . "'>
+                   " . $lbYear . "
                </th>
                <th>
                    <input class='center' type='text' size='4' maxlength='4' id='" . $frmBrandText . "' name='frmBrandText' value='" . $frmBrandText . "'>
@@ -410,10 +416,10 @@ if (!$result) {
                    <input class='center' type='text' size='4' maxlength='4' id='" . $frmSubCategoryText . "' name='frmSubCategoryText' value='" . $frmSubCategoryText . "'>
                </th>
                <th>
-                   <input class='center' type='text' size='10' maxlength='10' id='" . $frmCardNbrText . "' name='frmCardNbrText' value='" . $frmCardNbrText . "'>
+                   " . $lbCardNbr . "
                </th>
                <th>
-                   <input class='center' type='text' size='5' maxlength='5' id='" . $frmCardSubNbrText . "' name='frmCardSubNbrText' value='" . $frmCardSubNbrText . "'>
+                   " . $lbCardSubNbr . "
                </th>
                <th>
                    <input class='center' type='text' size='10' maxlength='10' id='" . $frmPlayerText . "' name='frmPlayerText' value='" . $frmPlayerText . "'>
@@ -427,13 +433,13 @@ if (!$result) {
                    <input class='center' type='text' size='10' maxlength='10' id='" . $frmTeamText . "' name='frmTeamText' value='" . $frmTeamText . "'>
                </th>
                <th>
-                   <input class='center' type='text' size='10' maxlength='10' id='" . $frmSerialNbrText . "' name='frmSerialNbrText' value='" . $frmSerialNbrText . "'>
+                   " . $lbSerialNbr . "
                </th>
                <th>
-                   <input class='center' type='text' size='1' maxlength='1' id='" . $frmAutoText . "' name='frmAutoText' value='" . $frmAutoText . "'>
+                   " . $lbAutograph . "
                </th>
                <th>
-                   <input class='center' type='text' size='1' maxlength='1' id='" . $frmRCText . "' name='frmRCText' value='" . $frmRCText . "'>
+                   " . $lbRookieCard . "
                </th>
                <th>
                    " . $lbShortPrint . "
@@ -492,6 +498,6 @@ $htmlcode .= html_end ($xxx);
 if ($testmode2) {
   $html_file_action = "A";
 }
-html_output ($htmlcode, $html_file_name, $html_file_action);
+print_html ($htmlcode, $html_file_name, $html_file_action);
 
 ?>

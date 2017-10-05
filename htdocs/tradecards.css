@@ -29,8 +29,22 @@
 .HSB {  /* horizontal scroll bar */
         overflow-x: auto;
 }
-.colShortPrint {
-        width: 125px;
+.colSelSport {
+}
+.colSelYear {
+}
+.colSelCardNbr {
+}
+.colSelCardSubNbr {
+}
+.colSelSerialNbr {
+}
+.colSelAutograph {
+}
+.colSelRookieCard {
+}
+.colSelShortPrint {
+        width: 175px;
 }
 body {
         /* 
