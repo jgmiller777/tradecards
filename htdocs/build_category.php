@@ -8,7 +8,9 @@ include("../include/inc_stuff.php");
 $title = "Trading Cards Database";
 $header = "DB Category Table Load";
 $cssfile = "tradecards.css";
-html_begin ($title, $header, $cssfile);
+$xxx = "";
+
+html_begin ($title, $header, $cssfile, $xxx);
 
 // ***** open the connection and database *****
 include("../include/inc_mysqlconnect_tradecards.php");
@@ -111,6 +113,6 @@ if (!$result) {
 }
 mysql_free_result ($result);
 
-html_end ();
+html_end ($xxx);
 
 ?>

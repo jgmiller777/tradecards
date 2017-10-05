@@ -16,7 +16,9 @@ include("../include/inc_stuff.php");
 $title = "Trading Cards - Backup Data";
 $header = "Create data files for backup";
 $cssfile = "tradecards.css";
-html_begin ($title, $header, $cssfile);
+$xxx = "";
+
+html_begin ($title, $header, $cssfile, $xxx);
 
 if ($testmode) { 
   printf ("<p>Starting up...</p>\n");
@@ -732,6 +734,6 @@ else {
   }
 }
 
-html_end ();
+html_end ($xxx);
 
 ?>

@@ -29,6 +29,23 @@
 .HSB {  /* horizontal scroll bar */
         overflow-x: auto;
 }
+.colSelSport {
+}
+.colSelYear {
+}
+.colSelCardNbr {
+}
+.colSelCardSubNbr {
+}
+.colSelSerialNbr {
+}
+.colSelAutograph {
+}
+.colSelRookieCard {
+}
+.colSelShortPrint {
+        width: 175px;
+}
 body {
         /* 
          * https://www.w3schools.com/css/css_font.asp

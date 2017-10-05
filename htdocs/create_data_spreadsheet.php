@@ -16,7 +16,9 @@ include("../include/inc_stuff.php");
 $title = "Trading Cards - Spreadsheet Data";
 $header = "Create data files for spreadsheet import";
 $cssfile = "tradecards.css";
-html_begin ($title, $header, $cssfile);
+$xxx = "";
+
+html_begin ($title, $header, $cssfile, $xxx);
 
 if ($testmode) { 
   printf ("<p>Starting up...</p>\n");
@@ -906,6 +908,6 @@ else {
   $result->free_result ();
 }
 
-html_end ();
+html_end ($xxx);
 
 ?>
