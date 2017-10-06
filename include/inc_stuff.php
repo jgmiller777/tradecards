@@ -51,7 +51,8 @@ function selectDistinct ($connection,
                          $attributeName,
                          $className,
                          $pulldownName,
-                         $defaultValue) {
+                         $defaultValue,
+                         $addEmptyEntry) {
 
   // -------------------------------------------------------------------------------------
   // O'Reilly "PHP and MySQL", 2nd ed., pages 184-188
@@ -61,7 +62,7 @@ function selectDistinct ($connection,
   // However, via CSS I might be able to "size" a 'select' element
   // -------------------------------------------------------------------------------------
 
-  // printf ("[%s]   [%s]   [%s]   [%s]   [%s]   [%s]<br />\n", $tableName, $attributeValue, $attributeName, $className, $pulldownName, $defaultValue);
+  // printf ("[%s]   [%s]   [%s]   [%s]   [%s]   [%s]   [%s]<br />\n", $tableName, $attributeValue, $attributeName, $className, $pulldownName, $defaultValue, $addEmptyEntry);
 
   $HTMLSelect = "";
   
@@ -89,40 +90,194 @@ function selectDistinct ($connection,
     . $className
     . "' name='"
     . $pulldownName
-    . "'>\n"
+    . "'>"
   ;
 
+  if ($addEmptyEntry) {
+    $resultValue = "";
+    $resultText  = "";
+
+    // Check if a $defaultValue is set and, if so, is it the current db value?
+    if (isset($defaultValue) && $resultText == $defaultValue) {
+      // Yes, show as selected
+      $HTMLSelect .= "
+                   <option selected='selected' value=\""
+        . $resultValue
+        . "\">"
+        . $resultText
+        . "</option>"
+      ;
+    } else {
+      // No, just show as an option
+      $HTMLSelect .= "
+                   <option value=\""
+        . $resultValue
+        . "\">"
+        . $resultText
+        . "</option>"
+      ;
+    }
+  }
   // Retrieve each row from the query
   while ($row = $resultId->fetch_object()) {
     // Get the value/text for the attribute to be displayed
     $resultValue = htmlspecialchars ($row->$attributeValue);
     $resultText  = htmlspecialchars ($row->$attributeName);
+    if ($addEmptyEntry && ($resultText == "")) {
+      continue;
+    }
 
     // Check if a $defaultValue is set and, if so, is it the current db value?
     if (isset($defaultValue) && $resultText == $defaultValue) {
       // Yes, show as selected
-      $HTMLSelect .=
-          "\t<option selected='selected' value='"
-        . $resultValue
-        . "'>"
-        . $resultText
-        . "</option>\n"
-      ;
-    } else {
-      // No, just show as an option
-      $HTMLSelect .=
-          "\t<option value=\""
+      $HTMLSelect .= "
+                   <option selected='selected' value=\""
         . $resultValue
         . "\">"
         . $resultText
-        . "</option>\n"
+        . "</option>"
+      ;
+    } else {
+      // No, just show as an option
+      $HTMLSelect .= "
+                   <option value=\""
+        . $resultValue
+        . "\">"
+        . $resultText
+        . "</option>"
       ;
     }
   }
-  $HTMLSelect .= ("</select>\n");
+  $HTMLSelect .= ("
+                 </select>");
   return ($HTMLSelect);
 }
-//jgm
+
+//-------------------------------------------------------------------------------
+function selectListboxRows ($connection,
+                            $tableName1,
+                            $attributeValue1,
+                            $attributeName1,
+                            $tableName2,
+                            $attributeValue2,
+                            $className,
+                            $pulldownName,
+                            $defaultValue,
+                            $addEmptyEntry) {
+
+  $HTMLSelect = "";
+  
+  // Query to find values of $attributeValue1 in both $tableName1 and $tableName2
+  $listboxQuery = 
+     "SELECT "
+    . $attributeValue1 . ", " . $attributeName1
+    . " FROM "
+    . $tableName1
+    . " WHERE "
+    . $attributeValue1
+    . " IN (SELECT "
+    . $attributeValue2
+    . " FROM "
+    . $tableName2
+    . ") ORDER BY "
+    . $attributeName1
+  ;
+
+  // Run the $listboxQuery on the $connection
+  $resultId = $connection->query($listboxQuery, MYSQLI_USE_RESULT);
+  if (!$resultId) {
+    die (showMySQLerror ($connection));
+  }
+
+  // Start the select widget
+  $HTMLSelect .= 
+     "<select class='"
+    . $className
+    . "' name='"
+    . $pulldownName
+    . "'>"
+  ;
+
+  if ($addEmptyEntry) {
+    $resultValue = "";
+    $resultText  = "";
+
+    // Check if a $defaultValue is set and, if so, is it the current db value?
+    if (isset($defaultValue) && $resultText == $defaultValue) {
+      // Yes, show as selected
+      $HTMLSelect .= "
+                   <option selected='selected' value=\""
+        . $resultValue
+        . "\">"
+        . $resultText
+        . "</option>"
+      ;
+    } else {
+      // No, just show as an option
+      $HTMLSelect .= "
+                   <option value=\""
+        . $resultValue
+        . "\">"
+        . $resultText
+        . "</option>"
+      ;
+    }
+  }
+  // Retrieve each row from the query
+  while ($row = $resultId->fetch_object()) {
+    // Get the value/text for the attribute to be displayed
+    $resultValue = htmlspecialchars ($row->$attributeValue1);
+    $resultText  = htmlspecialchars ($row->$attributeName1);
+    if ($addEmptyEntry && ($resultText == "")) {
+      continue;
+    }
+
+    // Check if a $defaultValue is set and, if so, is it the current db value?
+    if (isset($defaultValue) && $resultText == $defaultValue) {
+      // Yes, show as selected
+      $HTMLSelect .= "
+                   <option selected='selected' value=\""
+        . $resultValue
+        . "\">"
+        . $resultText
+        . "</option>"
+      ;
+    } else {
+      // No, just show as an option
+      $HTMLSelect .= "
+                   <option value=\""
+        . $resultValue
+        . "\">"
+        . $resultText
+        . "</option>"
+      ;
+    }
+  }
+  $HTMLSelect .= ("
+                 </select>");
+  return ($HTMLSelect);
+}
+
+function populateListboxText ( $connection,
+                               $tableName,
+                               $attributeValue,
+                               $attributeName,
+                              &$listboxName) {
+
+  if (!empty($listboxName)) {
+    $sql = "SELECT {$attributeName} FROM {$tableName} WHERE ({$attributeValue} = {$listboxName})";
+    $result = $connection->query ($sql);
+    if (!$result) {
+      showMySQLerror ($mysqli);
+    } else {
+      while ($row = $result->fetch_object ()) {
+        $listboxName = htmlspecialchars ($row->{$attributeName});
+      }
+    }
+  }
+
+}
+
 //jgm//-------------------------------------------------------------------------------
 //jgmfunction shellclean ($array, 
 //jgm                     $index, 
@@ -156,41 +311,41 @@ function print_html (&$htmlcode
                    ,  $html_file_name
                    ,  $html_file_action) {
 
-  printf ("%s", $htmlcode);
+  printf ("{$htmlcode}");
 
   switch ($html_file_action) {
     case "I":
       if (!($fh = fopen ($html_file_name, "wt"))) {
-        printf ("<p class='fopen-error'>Cannot open %s.</p>\n", $html_file_name);
+        printf ("<p class='fopen-error'>Cannot open {$html_file_name}.</p>\n");
         // exit (1);
       } else {
         if (!(fwrite ($fh, $htmlcode))) {
-          printf ("<p class='fwrite-error'>Cannot write %s.</p>\n", $html_file_name);
+          printf ("<p class='fwrite-error'>Cannot write {$html_file_name}.</p>\n");
           // exit (1);
         } else {
           if (!(fclose ($fh))) {
-            printf ("<p class='fclose-error'>Cannot close %s.</p>\n", $html_file_name);
+            printf ("<p class='fclose-error'>Cannot close {$html_file_name}.</p>\n");
             // exit (1);
           } else {
-            // printf ("<h3 class='filebackup'>%s closed!</h3>\n", $filename);
+            // printf ("<h3 class='filebackup'>{$html_file_name} closed!</h3>\n");
           }
         }
       }
       break;
     case "A":
       if (!($fh = fopen ($html_file_name, "at"))) {
-        printf ("<p class='fopen-error'>Cannot open %s.</p>\n", $html_file_name);
+        printf ("<p class='fopen-error'>Cannot open {$html_file_name}.</p>\n");
         // exit (1);
       } else {
         if (!(fwrite ($fh, $htmlcode))) {
-          printf ("<p class='fwrite-error'>Cannot write %s.</p>\n", $html_file_name);
+          printf ("<p class='fwrite-error'>Cannot write {$html_file_name}.</p>\n");
           // exit (1);
         } else {
           if (!(fclose ($fh))) {
-            printf ("<p class='fclose-error'>Cannot close %s.</p>\n", $html_file_name);
+            printf ("<p class='fclose-error'>Cannot close {$html_file_name}.</p>\n");
             // exit (1);
           } else {
-            // printf ("<h3 class='filebackup'>%s closed!</h3>\n", $filename);
+            // printf ("<h3 class='filebackup'>{$html_file_name} closed!</h3>\n");
           }
         }
       }
@@ -231,7 +386,7 @@ $htmlstr = "
 \n
 ";
 if (empty($htmlcode)) {
-  printf ("%s", $htmlstr);
+  printf ("{$htmlstr}");
 } else {
   return ($htmlstr);
 }
@@ -249,7 +404,7 @@ $htmlstr = "
 \n
 ";
 if (empty($htmlcode)) {
-  printf ("%s", $htmlstr);
+  printf ("{$htmlstr}");
 } else {
   return ($htmlstr);
 }
