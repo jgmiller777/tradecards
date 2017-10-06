@@ -30,12 +30,29 @@
         overflow-x: auto;
 }
 .colSelSport {
+        /* width: 175px; */
 }
 .colSelYear {
+}
+.colSelBrand {
+}
+.colSelSeries {
+}
+.colSelCategory {
+}
+.colSelSubCategory {
 }
 .colSelCardNbr {
 }
 .colSelCardSubNbr {
+}
+.colSelPlayer {
+}
+.colSelPNE {
+}
+.colSelCareer {
+}
+.colSelTeam {
 }
 .colSelSerialNbr {
 }
@@ -44,7 +61,6 @@
 .colSelRookieCard {
 }
 .colSelShortPrint {
-        width: 175px;
 }
 body {
         /* 

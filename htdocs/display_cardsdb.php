@@ -16,19 +16,20 @@ $header = "cardsDB Table Display";
 $cssfile = "tradecards.css";
 $htmlcode = "";
 $html_file_name = "../html_output/html_display_cardsDB.txt";
-$html_file_action = "X"; // don't write
+$html_file_action = "X"; // default of don't write
 
 // TODO
 $xxx = "delete me later";
 $htmlcode .= html_begin ($title, $header, $cssfile, $xxx);
 
 if ($testmode) { 
-  $htmlcode .= "<p>jgm8 Starting up...</p>\n";
+  $htmlcode .= "<p>jgm6 Starting up...</p>\n";
   // *** for now, timezone is set in php.ini file ***
   if (date_default_timezone_get()) {
     $htmlcode .= "<p>date_default_timezone_set: "
               . date_default_timezone_get()
-              . "</p>\n"
+              . "</p>"
+              . "\n"
     ;
   }
 }
@@ -56,14 +57,18 @@ $frmCardSubNbrText = "";
 $frmPlayerText = "";
 $frmPNEText = "";
 $frmCareerText = "";
-$frmTeamText = "";
+$frmTeamText = "1";
 $frmSerialNbrText = "";
 $frmAutoText = "";
 $frmRCText = "";
 $frmSPText = "";
-$nbrWhereConditions = 0;
+$nbrWhereConditions = 1;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  // Clearing previously set default values
+  $frmTeamText = "";
+  $nbrWhereConditions = 0;
+
   // TODO need to 'sanitize' data coming from $_POST array before using
   //
   // Short Print
@@ -102,8 +107,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   if (!empty($_POST["frmTeamText"])) {
     $frmTeamText = ($_POST["frmTeamText"]);
     ++$nbrWhereConditions;
-    if (!preg_match("/^[a-zA-Z0-9-]*$/", $frmTeamText)) {
-      $frmErrMsg = "- Only numbers, letters and dash allowed in Team";
+    if (!preg_match("/^[0-9]*$/", $frmTeamText)) {
+      $frmErrMsg = "- Only numbers allowed in Team";
     }
   }
   // Player Career
@@ -118,16 +123,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   if (!empty($_POST["frmPNEText"])) {
     $frmPNEText = ($_POST["frmPNEText"]);
     ++$nbrWhereConditions;
-    if (!preg_match("/^[a-zA-Z0-9-]*$/", $frmPNEText)) {
-      $frmErrMsg = "- Only numbers, letters and dash allowed in Player Name Extension";
+    if (!preg_match("/^[0-9]*$/", $frmPNEText)) {
+      $frmErrMsg = "- Only numbers allowed in Player Name Extension";
     }
   }
   // Player
   if (!empty($_POST["frmPlayerText"])) {
     $frmPlayerText = ($_POST["frmPlayerText"]);
     ++$nbrWhereConditions;
-    if (!preg_match("/^[a-zA-Z0-9-]*$/", $frmPlayerText)) {
-      $frmErrMsg = "- Only numbers, letters and dash allowed in Player";
+    if (!preg_match("/^[0-9]*$/", $frmPlayerText)) {
+      $frmErrMsg = "- Only numbers allowed in Player";
     }
   }
   // Card Sub Nbr
@@ -150,32 +155,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   if (!empty($_POST["frmSubCategoryText"])) {
     $frmSubCategoryText = ($_POST["frmSubCategoryText"]);
     ++$nbrWhereConditions;
-    if (!preg_match("/^[a-zA-Z0-9]*$/", $frmSubCategoryText)) {
-      $frmErrMsg = "- Only letters and numbers allowed in SubCategory";
+    if (!preg_match("/^[0-9]*$/", $frmSubCategoryText)) {
+      $frmErrMsg = "- Only numbers allowed in SubCategory";
     }
   }
   // Category
   if (!empty($_POST["frmCategoryText"])) {
     $frmCategoryText = ($_POST["frmCategoryText"]);
     ++$nbrWhereConditions;
-    if (!preg_match("/^[a-zA-Z0-9]*$/", $frmCategoryText)) {
-      $frmErrMsg = "- Only letters and numbers allowed in Category";
+    if (!preg_match("/^[0-9]*$/", $frmCategoryText)) {
+      $frmErrMsg = "- Only numbers allowed in Category";
     }
   }
   // Series
   if (!empty($_POST["frmSeriesText"])) {
     $frmSeriesText = ($_POST["frmSeriesText"]);
     ++$nbrWhereConditions;
-    if (!preg_match("/^[a-zA-Z0-9]*$/", $frmSeriesText)) {
-      $frmErrMsg = "- Only letters and numbers allowed in Series";
+    if (!preg_match("/^[0-9]*$/", $frmSeriesText)) {
+      $frmErrMsg = "- Only numbers allowed in Series";
     }
   }
   // Brand
   if (!empty($_POST["frmBrandText"])) {
     $frmBrandText = ($_POST["frmBrandText"]);
     ++$nbrWhereConditions;
-    if (!preg_match("/^[a-zA-Z0-9]*$/", $frmBrandText)) {
-      $frmErrMsg = "- Only letters and numbers allowed in Brand";
+    if (!preg_match("/^[0-9]*$/", $frmBrandText)) {
+      $frmErrMsg = "- Only numbers allowed in Brand";
     }
   }
   // Year
@@ -190,14 +195,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   if (!empty($_POST["frmSportText"])) {
     $frmSportText = ($_POST["frmSportText"]);
     ++$nbrWhereConditions;
-    if (!preg_match("/^[a-zA-Z0-9]*$/", $frmSportText)) {
-      $frmErrMsg = "- Only letters and numbers allowed in Sport";
+    if (!preg_match("/^[0-9]*$/", $frmSportText)) {
+      $frmErrMsg = "- Only numbers allowed in Sport";
     }
   }
   if ($testmode) {
     $htmlcode .= "<p>Number of needed WHERE conditions - "
               . $nbrWhereConditions
-              . "</p><br />\n"
+              . "</p>"
+              . "<br />"
+              . "\n"
     ;
   }
 }
@@ -259,67 +266,67 @@ if ($nbrWhereConditions >= 1) {
   if ($nbrWhereConditions > 1) { $and = " AND "; }
   // Sport
   if (!empty($frmSportText)) {
-    $sql .= "(cardsDB.sportID = '" . $frmSportText . "')" . $and;
+    $sql .= "(cardsDB.sportID = '{$frmSportText}'){$and}";
   }
   // Year
   if (!empty($frmYearText)) {
-    $sql .= "(cardsDB.year = '" . $frmYearText . "')" . $and;
+    $sql .= "(cardsDB.year = '{$frmYearText}'){$and}";
   }
   // Brand
   if (!empty($frmBrandText)) {
-    $sql .= "(cardsDB.brandID = '" . $frmBrandText . "')" . $and;
+    $sql .= "(cardsDB.brandID = '{$frmBrandText}'){$and}";
   }
   // Series
   if (!empty($frmSeriesText)) {
-    $sql .= "(cardsDB.seriesID = '" . $frmSeriesText . "')" . $and;
+    $sql .= "(cardsDB.seriesID = '{$frmSeriesText}'){$and}";
   }
   // Category
   if (!empty($frmCategoryText)) {
-    $sql .= "(cardsDB.categoryID = '" . $frmCategoryText . "')" . $and;
+    $sql .= "(cardsDB.categoryID = '{$frmCategoryText}'){$and}";
   }
   // SubCategory
   if (!empty($frmSubCategoryText)) {
-    $sql .= "(cardsDB.subcategoryID = '" . $frmSubCategoryText . "')" . $and;
+    $sql .= "(cardsDB.subcategoryID = '{$frmSubCategoryText}'){$and}";
   }
   // CardNbr
   if (!empty($frmCardNbrText)) {
-    $sql .= "(cardsDB.cardnbr = '" . $frmCardNbrText . "')" . $and;
+    $sql .= "(cardsDB.cardnbr = '{$frmCardNbrText}'){$and}";
   }
   // CardSubNbr
   if (!empty($frmCardSubNbrText)) {
-    $sql .= "(cardsDB.cardsubnbr = '" . $frmCardSubNbrText . "')" . $and;
+    $sql .= "(cardsDB.cardsubnbr = '{$frmCardSubNbrText}'){$and}";
   }
   // Player
   if (!empty($frmPlayerText)) {
-    $sql .= "(cardsDB.playerID = '" . $frmPlayerText . "')" . $and;
+    $sql .= "(cardsDB.playerID = '{$frmPlayerText}'){$and}";
   }
   // Player Name Ext
   if (!empty($frmPNEText)) {
-    $sql .= "(cardsDB.playernameextID = '" . $frmPNEText . "')" . $and;
+    $sql .= "(cardsDB.playernameextID = '{$frmPNEText}'){$and}";
   }
   // Player Career
   if (!empty($frmCareerText)) {
-    $sql .= "(Pla.career = '" . $frmCareerText . "')" . $and;
+    $sql .= "(Pla.career = '{$frmCareerText}'){$and}";
   }
   // Team
   if (!empty($frmTeamText)) {
-    $sql .= "(cardsDB.teamID = '" . $frmTeamText . "')" . $and;
+    $sql .= "(cardsDB.teamID = '{$frmTeamText}'){$and}";
   }
   // SerialNbrd
   if (!empty($frmSerialNbrText)) {
-    $sql .= "(cardsDB.serialnbr = '" . $frmSerialNbrText . "')" . $and;
+    $sql .= "(cardsDB.serialnbr = '{$frmSerialNbrText}'){$and}";
   }
   // Autograph
   if (!empty($frmAutoText)) {
-    $sql .= "(cardsDB.autograph = '" . $frmAutoText . "')" . $and;
+    $sql .= "(cardsDB.autograph = '{$frmAutoText}'){$and}";
   }
   // RookieCard
   if (!empty($frmRCText)) {
-    $sql .= "(cardsDB.rookiecard = '" . $frmRCText . "')" . $and;
+    $sql .= "(cardsDB.rookiecard = '{$frmRCText}'){$and}";
   }
   // Short Print
   if (!empty($frmSPText)) {
-    $sql .= "(cardsDB.shortprint = \"" . $frmSPText . "\")" . $and;
+    $sql .= "(cardsDB.shortprint = \"{$frmSPText}\"){$and}";
   }
   // Get rid of last five characters (i.e., " AND ") in $sql string
   if ($nbrWhereConditions > 1) {
@@ -344,13 +351,40 @@ if ($testmode) {
   print_html ($htmlcode, $html_file_name, $html_file_action);
 }
 
-$lbYear = selectDistinct ($mysqli, "cardsDB", "year", "year", "colSelYear", "frmYearText", $frmYearText);
-$lbCardNbr = selectDistinct ($mysqli, "cardsDB", "cardnbr", "cardnbr", "colSelCardNbr", "frmCardNbrText", $frmCardNbrText);
-$lbCardSubNbr = selectDistinct ($mysqli, "cardsDB", "cardsubnbr", "cardsubnbr", "colSelCardSubNbr", "frmCardSubNbrText", $frmCardSubNbrText);
-$lbSerialNbr = selectDistinct ($mysqli, "cardsDB", "serialnbr", "serialnbr", "colSelSerialNbr", "frmSerialNbrText", $frmSerialNbrText);
-$lbAutograph = selectDistinct ($mysqli, "cardsDB", "autograph", "autograph", "colSelAutograph", "frmAutoText", $frmAutoText);
-$lbRookieCard = selectDistinct ($mysqli, "cardsDB", "rookiecard", "rookiecard", "colSelRookieCard", "frmRCText", $frmRCText);
-$lbShortPrint = selectDistinct ($mysqli, "cardsDB", "shortprint", "shortprint", "colSelShortPrint", "frmSPText", $frmSPText);
+//jgm7 $htmlcode .= "<p>\$frmSportText = [{$frmSportText}]</p>\n";
+//jgm7 $htmlcode .= "<p>\$frmBrandText = [{$frmBrandText}]</p>\n";
+//jgm7 $htmlcode .= "<p>\$frmSeriesText = [{$frmSeriesText}]</p>\n";
+//jgm7 $htmlcode .= "<p>\$frmCategoryText = [{$frmCategoryText}]</p>\n";
+//jgm7 $htmlcode .= "<p>\$frmSubCategoryText = [{$frmSubCategoryText}]</p>\n";
+//jgm7 $htmlcode .= "<p>\$frmPlayerText = [{$frmPlayerText}]</p>\n";
+//jgm7 $htmlcode .= "<p>\$frmPNEText = [{$frmPNEText}]</p>\n";
+//jgm7 $htmlcode .= "<p>\$frmTeamText = [{$frmTeamText}]</p>\n";
+
+populateListboxText ($mysqli, "sport", "id", "name", $frmSportText);
+populateListboxText ($mysqli, "brand", "id", "name", $frmBrandText);
+populateListboxText ($mysqli, "series", "id", "name", $frmSeriesText);
+populateListboxText ($mysqli, "category", "id", "name", $frmCategoryText);
+populateListboxText ($mysqli, "subcategory", "id", "name", $frmSubCategoryText);
+populateListboxText ($mysqli, "player", "id", "name", $frmPlayerText);
+populateListboxText ($mysqli, "playernameext", "id", "extname", $frmPNEText);
+populateListboxText ($mysqli, "team", "id", "name", $frmTeamText);
+
+$lbSport = selectListboxRows ($mysqli, "sport", "id", "name", "cardsDB", "sportid", "colSelSport", "frmSportText", $frmSportText, TRUE);
+$lbYear = selectDistinct ($mysqli, "cardsDB", "year", "year", "colSelYear", "frmYearText", $frmYearText, TRUE);
+$lbBrand = selectListboxRows ($mysqli, "brand", "id", "name", "cardsDB", "brandid", "colSelBrand", "frmBrandText", $frmBrandText, TRUE);
+$lbSeries = selectListboxRows ($mysqli, "series", "id", "name", "cardsDB", "seriesid", "colSelSeries", "frmSeriesText", $frmSeriesText, TRUE);
+$lbCategory = selectListboxRows ($mysqli, "category", "id", "name", "cardsDB", "categoryid", "colSelCategory", "frmCategoryText", $frmCategoryText, TRUE);
+$lbSubCategory = selectListboxRows ($mysqli, "subcategory", "id", "name", "cardsDB", "subcategoryid", "colSelSubCategory", "frmSubCategoryText", $frmSubCategoryText, TRUE);
+$lbCardNbr = selectDistinct ($mysqli, "cardsDB", "cardnbr", "cardnbr", "colSelCardNbr", "frmCardNbrText", $frmCardNbrText, TRUE);
+$lbCardSubNbr = selectDistinct ($mysqli, "cardsDB", "cardsubnbr", "cardsubnbr", "colSelCardSubNbr", "frmCardSubNbrText", $frmCardSubNbrText, FALSE);
+$lbPlayer = selectListboxRows ($mysqli, "player", "id", "name", "cardsDB", "playerid", "colSelPlayer", "frmPlayerText", $frmPlayerText, TRUE);
+$lbPNE = selectListboxRows ($mysqli, "playernameext", "id", "extname", "cardsDB", "playernameextID", "colSelPNE", "frmPNEText", $frmPNEText, TRUE);
+$lbCareer = selectDistinct ($mysqli, "player", "career", "career", "colSelCareer", "frmCareerText", $frmCareerText, FALSE);
+$lbTeam = selectListboxRows ($mysqli, "team", "id", "name", "cardsDB", "teamid", "colSelTeam", "frmTeamText", $frmTeamText, TRUE);
+$lbSerialNbr = selectDistinct ($mysqli, "cardsDB", "serialnbr", "serialnbr", "colSelSerialNbr", "frmSerialNbrText", $frmSerialNbrText, FALSE);
+$lbAutograph = selectDistinct ($mysqli, "cardsDB", "autograph", "autograph", "colSelAutograph", "frmAutoText", $frmAutoText, TRUE);
+$lbRookieCard = selectDistinct ($mysqli, "cardsDB", "rookiecard", "rookiecard", "colSelRookieCard", "frmRCText", $frmRCText, FALSE);
+$lbShortPrint = selectDistinct ($mysqli, "cardsDB", "shortprint", "shortprint", "colSelShortPrint", "frmSPText", $frmSPText, FALSE);
 
 // TODO ??? don't perform query if there's a frmErrMsg ???
 $result = $mysqli->query ($sql);
@@ -397,53 +431,21 @@ if (!$result) {
              </tr>
              <tr>
                <th></th>
-               <th>
-                   <input class='center' type='text' size='1' maxlength='1' id='" . $frmSportText . "' name='frmSportText' value='" . $frmSportText . "'>
-               </th>
-               <th>
-                   " . $lbYear . "
-               </th>
-               <th>
-                   <input class='center' type='text' size='4' maxlength='4' id='" . $frmBrandText . "' name='frmBrandText' value='" . $frmBrandText . "'>
-               </th>
-               <th>
-                   <input class='center' type='text' size='4' maxlength='4' id='" . $frmSeriesText . "' name='frmSeriesText' value='" . $frmSeriesText . "'>
-               </th>
-               <th>
-                   <input class='center' type='text' size='4' maxlength='4' id='" . $frmCategoryText . "' name='frmCategoryText' value='" . $frmCategoryText . "'>
-               </th>
-               <th>
-                   <input class='center' type='text' size='4' maxlength='4' id='" . $frmSubCategoryText . "' name='frmSubCategoryText' value='" . $frmSubCategoryText . "'>
-               </th>
-               <th>
-                   " . $lbCardNbr . "
-               </th>
-               <th>
-                   " . $lbCardSubNbr . "
-               </th>
-               <th>
-                   <input class='center' type='text' size='10' maxlength='10' id='" . $frmPlayerText . "' name='frmPlayerText' value='" . $frmPlayerText . "'>
-               </th>
-               <th>
-                   <input class='center' type='text' size='10' maxlength='10' id='" . $frmPNEText . "' name='frmPNEText' value='" . $frmPNEText . "'>
-                   <br />
-                   <input class='center' type='text' size='15' maxlength='15' id='" . $frmCareerText . "' name='frmCareerText' value='" . $frmCareerText . "'>
-               </th>
-               <th>
-                   <input class='center' type='text' size='10' maxlength='10' id='" . $frmTeamText . "' name='frmTeamText' value='" . $frmTeamText . "'>
-               </th>
-               <th>
-                   " . $lbSerialNbr . "
-               </th>
-               <th>
-                   " . $lbAutograph . "
-               </th>
-               <th>
-                   " . $lbRookieCard . "
-               </th>
-               <th>
-                   " . $lbShortPrint . "
-               </th>
+               <th>{$lbSport}</th>
+               <th>{$lbYear}</th>
+               <th>{$lbBrand}</th>
+               <th>{$lbSeries}</th>
+               <th>{$lbCategory}</th>
+               <th>{$lbSubCategory}</th>
+               <th>{$lbCardNbr}</th>
+               <th>{$lbCardSubNbr}</th>
+               <th>{$lbPlayer}</th>
+               <th>{$lbPNE}<br />{$lbCareer}</th>
+               <th>{$lbTeam}</th>
+               <th>{$lbSerialNbr}</th>
+               <th>{$lbAutograph}</th>
+               <th>{$lbRookieCard}</th>
+               <th>{$lbShortPrint}</th>
                <th></th>
                <th></th>
                <th></th>
@@ -488,7 +490,7 @@ if (!$result) {
 $endtime = getDateTime("Y/m/d H:i:s");
 
 if ($testmode) { 
-  $htmlcode .= "<br />\n<p>Start: " . $starttime . " --- End: " . $endtime . "</p>\n";
+  $htmlcode .= "<br />\n<p>Start: {$starttime} --- End: {$endtime}</p>\n";
 }
 
 // TODO
